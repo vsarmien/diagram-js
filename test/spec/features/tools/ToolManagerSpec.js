@@ -7,10 +7,12 @@ var createKeyEvent = require('../../../util/KeyEvents').createKeyEvent;
 
 var TestContainer = require('mocha-test-container-support');
 
+var MockTool = require('./MockTool');
+
 /* global bootstrapDiagram, inject */
 
 
-var toolManagerModule = require('../../../../lib/features/tool-manager'),
+var toolsModule = require('../../../../lib/features/tools'),
     handToolModule = require('../../../../lib/features/hand-tool'),
     keyboardModule = require('../../../../lib/features/keyboard'),
     draggingModule = require('../../../../lib/features/dragging');
@@ -18,36 +20,69 @@ var toolManagerModule = require('../../../../lib/features/tool-manager'),
 var Cursor = require('../../../../lib/util/Cursor');
 
 
-describe('features/tool-manager', function() {
-
-  beforeEach(bootstrapDiagram({ modules: [ toolManagerModule, keyboardModule, handToolModule, draggingModule ] }));
-
-  beforeEach(inject(function(dragging) {
-    dragging.setOptions({ manual: true });
-  }));
+describe('features/tools - tool manager', function() {
 
   describe('basics', function() {
 
-    it('should register a tool', inject(function(toolManager) {
-      // when
-      toolManager.registerTool('lasso', {
-        tool: 'lasso.selection',
-        dragging: 'lasso'
-      });
-
-      // then
-      expect(toolManager.length()).to.equal(2);
+    beforeEach(bootstrapDiagram({
+      modules: [
+        toolsModule,
+        keyboardModule
+      ]
     }));
 
 
-    it('should throw error when registering a tool without events', inject(function(toolManager) {
+    it('should register a tool', inject(function(toolManager) {
+
       // when
-      function result() {
-        toolManager.registerTool('hand', { tool: 'foo' });
+      toolManager.registerTool({}, { prefix: 'tool' });
+
+      // then
+      expect(getTools(toolManager)).to.have.length(1);
+    }));
+
+
+    it('should throw error when double registering for prefix', inject(function(toolManager) {
+
+      // given
+      toolManager.registerTool({}, { prefix: 'tool' });
+
+      // when
+      function doubleRegister() {
+        toolManager.registerTool({}, { prefix: 'tool' });
       }
 
       // then
-      expect(result).to.throw('A tool has to be registered with it\'s "events"');
+      expect(doubleRegister).to.throw('prefix already bound to existing tool');
+    }));
+
+
+    it('should auto-wire a tool', inject(function(eventBus, toolManager) {
+
+      var tool = new MockTool(eventBus, { prefix: 'mock' });
+
+      // when
+      toolManager._init();
+
+      // then
+      expect(getTools(toolManager)).to.have.length(1);
+    }));
+
+  });
+
+
+  describe('active tracking', function() {
+
+    beforeEach(bootstrapDiagram({
+      modules: [
+        toolsModule,
+        keyboardModule,
+        handToolModule
+      ]
+    }));
+
+    beforeEach(inject(function(dragging) {
+      dragging.setOptions({ manual: true });
     }));
 
 
@@ -71,7 +106,20 @@ describe('features/tool-manager', function() {
   });
 
 
-  describe('cursor', function () {
+  describe('cursor handling', function () {
+
+    beforeEach(bootstrapDiagram({
+      modules: [
+        toolsModule,
+        keyboardModule,
+        handToolModule
+      ]
+    }));
+
+    beforeEach(inject(function(dragging) {
+      dragging.setOptions({ manual: true });
+    }));
+
 
     var container;
 
@@ -81,22 +129,9 @@ describe('features/tool-manager', function() {
       Cursor.unset();
     });
 
-    it('should register with cursor', inject(function(toolManager) {
-      // when
-      toolManager.registerTool('lasso', {
-        tool: 'lasso.selection',
-        dragging: 'lasso',
-        cursor: 'crosshair',
-        handler: function(event) {
-          return true;
-        }
-      });
-
-      expect(toolManager._cursors.lasso).to.exist;
-    }));
-
 
     it('should add cursor', inject(function(keyboard, toolManager) {
+
       // when
       var e = createKeyEvent(container, 17, true);
 
@@ -107,6 +142,7 @@ describe('features/tool-manager', function() {
 
 
     it('should remove cursor', inject(function(keyboard, toolManager) {
+
       // when
       var keydown = createKeyEvent(container, 17, true),
           keyup = createKeyEvent(container, 17, false);
@@ -121,3 +157,10 @@ describe('features/tool-manager', function() {
   });
 
 });
+
+
+//////// utilities ///////////////////////////////////////////////
+
+function getTools(toolManager) {
+  return Object.keys(toolManager.getTools());
+}

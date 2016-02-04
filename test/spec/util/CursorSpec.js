@@ -6,8 +6,13 @@ var Cursor = require('../../../lib/util/Cursor');
 describe('Cursor', function() {
 
   beforeEach(function() {
-    Cursor.unset();
+    Cursor.reset();
   });
+
+  after(function() {
+    Cursor.reset();
+  });
+
 
   it('should set cursor', function() {
     // when
