@@ -289,6 +289,33 @@ describe('features/copy-paste', function() {
       }));
 
 
+      it.only('should paste with labels', inject(function(copyPaste, modeling) {
+        console.log(childShape.parent.children.length);
+        // given
+        modeling.createLabel(childShape, { x: 160, y: 145 }),
+        // modeling.createLabel(childShape, { x: 200, y: 210 });
+        console.log(childShape.parent.children.length);
+
+
+        // when
+        copyPaste.copy([ childShape ]);
+
+        copyPaste.paste({
+          element: parentShape,
+          point: {
+            x: 900,
+            y: 350
+          }
+        });
+
+        console.log('------');
+
+        // then
+        // child shape + label
+        expect(parentShape.children).to.have.length(2);
+      }));
+
+
       it('should reject overall paste of elements based on rules', inject(function(copyPaste, clipboard, eventBus) {
         // given
         var listener = sinon.spy();
