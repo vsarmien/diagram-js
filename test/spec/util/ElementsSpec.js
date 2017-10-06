@@ -35,13 +35,6 @@ describe('util/Elements', function() {
     attachers: []
   };
 
-  var attacher = {
-    id: 'attacher',
-    host: shapeC
-  };
-
-  shapeC.attachers.push(attacher);
-
   var shapeD = {
     id: 'd',
     children: [

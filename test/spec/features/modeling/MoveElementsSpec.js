@@ -75,7 +75,6 @@ describe('features/modeling - move elements', function() {
   }));
 
 
-
   describe('should move', function() {
 
     it('execute', inject(function(modeling) {

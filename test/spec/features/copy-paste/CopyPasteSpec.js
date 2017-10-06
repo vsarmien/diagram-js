@@ -15,7 +15,12 @@ var copyPasteModule = require('../../../../lib/features/copy-paste'),
 describe('features/copy-paste', function() {
 
   beforeEach(bootstrapDiagram({
-    modules: [ rulesModule, modelingModule, copyPasteModule, selectionModule ]
+    modules: [
+      rulesModule,
+      modelingModule,
+      copyPasteModule,
+      selectionModule
+    ]
   }));
 
 
@@ -80,12 +85,11 @@ describe('features/copy-paste', function() {
       attacher = elementFactory.createShape({
         id: 'attacher',
         x: 375, y: 25,
-        width: 50, height: 50
+        width: 50, height: 50,
+        host: host
       });
 
       canvas.addShape(attacher, parentShape2);
-
-      modeling.updateAttachment(attacher, host);
 
       childShape = elementFactory.createShape({
         id: 'childShape',
@@ -128,7 +132,12 @@ describe('features/copy-paste', function() {
           // then
           expect(toObjectBranch(tree[0])).to.have.keys('parent2');
 
-          expect(toObjectBranch(tree[1])).to.have.keys('host', 'childShape', 'childShape2', 'connection');
+          expect(toObjectBranch(tree[1])).to.have.keys(
+            'host',
+            'childShape',
+            'childShape2',
+            'connection'
+          );
         });
 
         // when
@@ -202,7 +211,12 @@ describe('features/copy-paste', function() {
         // then
         expect(toObjectBranch(tree[0])).to.have.keys('parent2');
 
-        expect(toObjectBranch(tree[1])).to.have.keys('host', 'childShape', 'childShape2', 'connection');
+        expect(toObjectBranch(tree[1])).to.have.keys(
+          'host',
+          'childShape',
+          'childShape2',
+          'connection'
+        );
       }));
 
 
@@ -213,7 +227,12 @@ describe('features/copy-paste', function() {
         var tree = clipboard.get();
 
         // then
-        expect(toObjectBranch(tree[0])).to.have.keys('host', 'childShape', 'childShape2', 'connection');
+        expect(toObjectBranch(tree[0])).to.have.keys(
+          'host',
+          'childShape',
+          'childShape2',
+          'connection'
+        );
       }));
 
 

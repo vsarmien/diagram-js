@@ -3,13 +3,18 @@
 /* global bootstrapDiagram, inject */
 
 
-var modelingModule = require('../../../../lib/features/modeling');
+var modelingModule = require('../../../../lib/features/modeling'),
+    labelSupportModule = require('../../../../lib/features/label-support');
 
 
 describe('features/modeling - remove connection', function() {
 
-
-  beforeEach(bootstrapDiagram({ modules: [ modelingModule ] }));
+  beforeEach(bootstrapDiagram({
+    modules: [
+      modelingModule,
+      labelSupportModule
+    ]
+  }));
 
 
   var rootShape, parentShape, childShape, childShape2, connection;
@@ -166,5 +171,7 @@ describe('features/modeling - remove connection', function() {
       expect(childShape.outgoing).to.contain(connection);
       expect(childShape2.incoming).to.contain(connection);
     }));
+
   });
+
 });

@@ -7,6 +7,8 @@ var unique = require('lodash/array/unique'),
 
 var TestContainer = require('mocha-test-container-support');
 
+var TestElementFactory = require('./support/TestElementFactory');
+
 var Diagram = require('../../lib/Diagram'),
     domEvent = require('min-dom/lib/event');
 
@@ -82,7 +84,9 @@ function bootstrapDiagram(options, locals) {
     }, OPTIONS, _options);
 
 
-    var mockModule = {};
+    var mockModule = {
+      elementFactory: [ 'type', TestElementFactory ]
+    };
 
     forEach(_locals, function(v, k) {
       mockModule[k] = ['value', v];

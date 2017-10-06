@@ -5,7 +5,9 @@
 
 var modelingModule = require('../../../../lib/features/modeling'),
     contextPadModule = require('../../../../lib/features/context-pad'),
-    selectionModule = require('../../../../lib/features/selection');
+    selectionModule = require('../../../../lib/features/selection'),
+    labelSupportModule = require('../../../../lib/features/label-support');
+
 
 describe('features/modeling - #removeShape', function() {
 
@@ -20,7 +22,12 @@ describe('features/modeling - #removeShape', function() {
         connection,
         connection2;
 
-    beforeEach(bootstrapDiagram({ modules: [ modelingModule ] }));
+    beforeEach(bootstrapDiagram({
+      modules: [
+        modelingModule,
+        labelSupportModule
+      ]
+    }));
 
     beforeEach(inject(function(elementFactory, canvas) {
 
@@ -195,7 +202,14 @@ describe('features/modeling - #removeShape', function() {
 
   describe('context pad interaction', function() {
 
-    beforeEach(bootstrapDiagram({ modules: [ modelingModule, contextPadModule, selectionModule ] }));
+    beforeEach(bootstrapDiagram({
+      modules: [
+        modelingModule,
+        labelSupportModule,
+        contextPadModule,
+        selectionModule
+      ]
+    }));
 
     it('should close context pad on remove shape', inject(function(canvas, modeling, contextPad, selection) {
 

@@ -1,11 +1,17 @@
 'use strict';
 
-var Model = require('../model');
+var Model = require('../../../lib/model');
+
+var assign = require('lodash/object/assign');
+
 
 /**
- * A factory for diagram-js shapes
+ * A factory for diagram-js shapes that performs
+ * a shallow wiring of element relationships.
  */
-function ElementFactory() { }
+function ElementFactory() {
+  this._uid = 12;
+}
 
 module.exports = ElementFactory;
 
@@ -36,5 +42,27 @@ ElementFactory.prototype.createConnection = function(attrs) {
  */
 ElementFactory.prototype.create = function(type, attrs) {
 
-  return Model.create(type, attrs);
+  var el = Model.create(type, assign({
+    id: type + '_' + (this._uid++)
+  }, attrs || {}));
+
+  // shallow wire relationships
+
+  if (el.source) {
+    el.source.outgoing.push(el);
+  }
+
+  if (el.target) {
+    el.target.incoming.push(el);
+  }
+
+  if (el.label) {
+    el.label.labelTarget = el;
+  }
+
+  if (el.host) {
+    el.host.attachers.push(el);
+  }
+
+  return el;
 };

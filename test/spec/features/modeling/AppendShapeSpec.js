@@ -62,8 +62,6 @@ describe('features/modeling - append shape', function() {
       // shape added
 
       // then
-      expect(newShape).to.exist;
-
       expect(newShape.x + newShape.width / 2).to.equal(200);
       expect(newShape.y + newShape.height / 2).to.equal(200);
     }));
